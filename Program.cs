@@ -1,6 +1,6 @@
 ﻿using SFML.Graphics;
-using SFML.Window;
 using SFML.System;
+using SFML.Window;
 class Game
 {
     static void Main()
@@ -8,16 +8,15 @@ class Game
         RenderWindow window = new(new VideoMode((1280,720)), "Labyrinth of Horror");
         window.SetFramerateLimit(60);
         window.Closed += (sender,e) => window.Close();
-        //testing purposes
-        Menu menu = new();
-        Button ExitButton = new((50,50),(100,40));
-        menu.AddButton(ExitButton);
+        Clock clock = new();
+        StateHandler state = new(window);
+        float dt;
         while (window.IsOpen)
         {
             window.Clear();
-            menu.Draw(window);
-            menu.Update(window);
+            dt = clock.Restart().AsSeconds();
             window.DispatchEvents();
+            state.UpdateState(dt);
             window.Display();
         }
     }
