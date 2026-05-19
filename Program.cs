@@ -14,8 +14,8 @@ class Game
         while (window.IsOpen)
         {
             window.Clear();
-            dt = clock.Restart().AsSeconds();
             window.DispatchEvents();
+            dt = clock.Restart().AsSeconds();
             state.UpdateState(dt);
             window.Display();
         }

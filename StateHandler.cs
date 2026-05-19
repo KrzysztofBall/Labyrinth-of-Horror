@@ -14,7 +14,7 @@ public class StateHandler
         Menu = new Menu(this);
         Paused = new Paused(this);
         Gameplay = new Gameplay(this);
-        //todo
+        //todo more states
         CurrentState = Menu;
     }
 

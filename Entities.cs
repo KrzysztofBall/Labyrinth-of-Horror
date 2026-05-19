@@ -17,6 +17,7 @@ public class Player : IEntity
 
     public float Speed = 3f;
     public float RotationSpeed = 2.5f;
+    public float FOV = 0.66f;
     public float Radius { get; private set; } = 0.3f;
 
     public Player(float x, float y)
@@ -36,25 +37,29 @@ public class Player : IEntity
         if (Keyboard.IsKeyPressed(Keyboard.Key.W))
         {
             Move(MathF.Cos(Angle) * Speed * dt,
-                 MathF.Sin(Angle) * Speed * dt,
-                 map);
+             MathF.Sin(Angle) * Speed * dt,
+             map);
         }
 
         if (Keyboard.IsKeyPressed(Keyboard.Key.S))
         {
             Move(-MathF.Cos(Angle) * Speed * dt,
-                 -MathF.Sin(Angle) * Speed * dt,
-                 map);
-        }
-
-        if (Keyboard.IsKeyPressed(Keyboard.Key.A))
-        {
-            Angle -= 2f * dt;
+             -MathF.Sin(Angle) * Speed * dt,
+             map);
         }
 
         if (Keyboard.IsKeyPressed(Keyboard.Key.D))
         {
-            Angle += 2f * dt;
+            Move(-MathF.Sin(Angle) * Speed * dt,
+              MathF.Cos(Angle) * Speed * dt,
+              map);
+        }
+
+        if (Keyboard.IsKeyPressed(Keyboard.Key.A))
+        {
+            Move(MathF.Sin(Angle) * Speed * dt,
+             -MathF.Cos(Angle) * Speed * dt,
+             map);
         }
         HandleMouse(window);
     }
@@ -72,11 +77,9 @@ public class Player : IEntity
     {
         float newX = Position.X + dx;
         float newY = Position.Y + dy;
-
-        if (!map.IsWall((int)(newX + MathF.Sign(dx) * Radius), (int)Position.Y))
-            Position = new Vector2f(newX, Position.Y);
-
-        if (!map.IsWall((int)Position.X, (int)(newY + MathF.Sign(dy) * Radius)))
-            Position = new Vector2f(Position.X, newY);
+        if (map.Map[(int) newX,(int) newY] == 0)
+        {
+            Position = new(newX,newY);
+        }
     }
 }

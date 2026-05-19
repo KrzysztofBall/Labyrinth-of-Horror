@@ -5,7 +5,6 @@ public interface IState
 {
     void Update(float dt, RenderWindow window);
     void Draw(RenderWindow window);
-
 }
 
 class Menu : IState
@@ -25,11 +24,6 @@ class Menu : IState
         {
             button.Clicked(window);
         }
-    }
-
-    public void AddButton(Button newbutton)
-    {
-        buttons.Add(newbutton);
     }
 
     public void Draw(RenderWindow window)
@@ -53,7 +47,6 @@ class Gameplay : IState
     {
         if (Keyboard.IsKeyPressed(Keyboard.Key.Escape))
         {
-            //Change state to Paused
             Handler.ChangeState(Handler.Paused);
         }
         Map.Update(dt,window);
@@ -84,7 +77,6 @@ class Paused : IState
         }
         if (Keyboard.IsKeyPressed(Keyboard.Key.Escape))
         {
-            //unpause
             Handler.ChangeState(Handler.Gameplay);
         }
     }
