@@ -1,11 +1,7 @@
 using SFML.Graphics;
 using SFML.Window;
 
-public interface IState
-{
-    void Update(float dt, RenderWindow window);
-    void Draw(RenderWindow window);
-}
+
 
 class Menu : IState
 {
@@ -16,7 +12,8 @@ class Menu : IState
     {
         //addbuttons
         Handler = stateHandler;
-        buttons.Add(new Button((50,50),(50,50),_ => Handler.ChangeState(Handler.Gameplay)));
+        buttons.Add(new Button((440,425),(400,50),_ => Handler.ChangeState(Handler.Gameplay)));
+        //buttons.Add(new Button((440,500),(400,50),_ => Handler.Window.Close()));
     }
     public void Update(float dt, RenderWindow window)
     {
@@ -55,7 +52,10 @@ class Gameplay : IState
     public void Draw(RenderWindow window)
     {
         Map.Draw(window); //raycasting
+        foreach (var enemy in Map.Enemies) enemy.Draw(window,Map);
         Map.Player.Draw(window); //firstperson view (weapon/hand + UI)
+        Map.DrawMinimap(window);
+        
     }
 }
 
@@ -67,7 +67,9 @@ class Paused : IState
     public Paused(StateHandler handler)
     {
         Handler = handler;
-        buttons.Add(new Button((100,100),(100,40),_ => Handler.Window.Close()));
+        buttons.Add(new Button((440,425),(400,50),_=> Handler.ChangeState(Handler.Gameplay)));
+        buttons.Add(new Button((440,575),(400,50),_ => Handler.Window.Close()));
+        buttons.Add(new Button((440,500),(400,50),_=> Handler.ChangeState(Handler.Menu)));
     }
     public void Update(float dt, RenderWindow window)
     {
@@ -81,6 +83,59 @@ class Paused : IState
         }
     }
 
+    public void Draw(RenderWindow window)
+    {
+        foreach (var button in buttons)
+        {
+            button.Draw(window);
+        }
+    }
+}
+
+class Win : IState
+{
+    private StateHandler Handler;
+    private List<Button> buttons = [];
+    public Win(StateHandler handler)
+    {
+        this.Handler = handler;
+        buttons.Add(new Button((440,500),(400,50),_=> Handler.ChangeState(Handler.Menu)));
+    }
+
+    public void Update(float dt,RenderWindow window)
+    {
+        foreach (var button in buttons)
+        {
+            button.Clicked(window);
+        }
+    }
+
+    public void Draw(RenderWindow window)
+    {
+        foreach (var button in buttons)
+        {
+            button.Draw(window);
+        }
+    }
+}
+
+class Lose : IState
+{
+    private StateHandler Handler;
+    private List<Button> buttons = [];
+    public Lose(StateHandler handler)
+    {
+        this.Handler = handler;
+        buttons.Add(new Button((440,500),(400,50),_=> Handler.ChangeState(Handler.Menu)));
+    }
+
+    public void Update(float dt,RenderWindow window)
+    {
+        foreach (var button in buttons)
+        {
+            button.Clicked(window);
+        }
+    }
     public void Draw(RenderWindow window)
     {
         foreach (var button in buttons)
