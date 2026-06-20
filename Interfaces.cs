@@ -14,6 +14,19 @@ public abstract class Actor : IEntity
 
     public Vector2f Hitbox => new Vector2f(Radius * 2, Radius * 2);
 
+    bool IsBlocked(int tx, int ty,MapHandler map)
+{
+    int tile = map.Map[ty, tx];
+
+    if (tile == 1) return true; // ściana
+
+    if (tile == 3 && !map.ExitUnlocked)
+        return true; // wyjście zamknięte
+
+    return false; // puste pole lub otwarte wyjście
+}
+
+
     protected void Move(float dx, float dy, MapHandler map)
     {
         float newX = Position.X + dx;
@@ -25,9 +38,10 @@ public abstract class Actor : IEntity
         int tileY = (int)Position.Y;
 
         bool blockX = tileX < 0 || tileY < 0 ||
-                      tileX >= map.Map.GetLength(1) ||
-                      tileY >= map.Map.GetLength(0) ||
-                      map.Map[tileY, tileX] != 0;
+              tileX >= map.Map.GetLength(1) ||
+              tileY >= map.Map.GetLength(0) ||
+              IsBlocked(tileX, tileY,map);
+
 
         if (!blockX)
             Position = new Vector2f(newX, Position.Y);
@@ -40,13 +54,12 @@ public abstract class Actor : IEntity
         bool blockY = tileX < 0 || tileY < 0 ||
                       tileX >= map.Map.GetLength(1) ||
                       tileY >= map.Map.GetLength(0) ||
-                      map.Map[tileY, tileX] != 0;
+                      IsBlocked(tileX,tileY,map);
 
         if (!blockY)
             Position = new Vector2f(Position.X, newY);
     }
 
-    public abstract void Update(float dt, MapHandler map, RenderWindow window);
 }
 public interface IState
 {

@@ -14,6 +14,8 @@ public class MapHandler
 
     private const int rayWidth = 320;   // liczba promieni
     private const float scaleX = (float)screenWidth / rayWidth;
+    public bool ExitUnlocked => Enemies.All(e => !e.Alive);
+
 
     public MapHandler()
     {
@@ -69,11 +71,13 @@ public class MapHandler
     }
 
 
-    public void Update(float dt, RenderWindow window)
+    public int Update(float dt, RenderWindow window)
     {
-        Player.Update(dt, this, window);
+        if(Player.Update(dt, this, window) == 1) return 1;
+        if(Player.Update(dt, this, window) == 2) return 2;
 
         foreach (var enemy in Enemies) enemy.Update(dt, this, window);
+        return 0;
     }
 
 

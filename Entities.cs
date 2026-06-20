@@ -10,7 +10,7 @@ public class Player : Actor
     public float RotationSpeed = 2.5f;
     public float FOV = 0.66f;
 
-    public float Health = 100f;
+    public float Health = 50f;
 
     public Weapon weapon = new();
 
@@ -26,7 +26,7 @@ public class Player : Actor
 
     }
 
-    public override void Update(float dt, MapHandler map, RenderWindow window)
+    public int Update(float dt, MapHandler map, RenderWindow window)
     {
         weapon.Update(dt);
 
@@ -47,6 +47,16 @@ public class Player : Actor
 
         if (Keyboard.IsKeyPressed(Keyboard.Key.A))
             Move(MathF.Sin(Angle) * Speed * dt, -MathF.Cos(Angle) * Speed * dt, map);
+        
+        int tx = (int)Position.X;
+        int ty = (int)Position.Y;
+
+        if (map.Map[ty, tx] == 3 && map.ExitUnlocked)
+        {
+            return 1;
+        }
+        if(Health<=0) return 2;
+        return 0;
     }
 
     public void HandleMouse(RenderWindow window)
@@ -90,10 +100,6 @@ public class Player : Actor
     public void TakeDamage(float dmg)
     {
         Health -= dmg;
-        if (Health <= 0)
-        {
-            // TODO: Game Over
-        }
     }
 
     public void Draw(RenderWindow window)
@@ -151,7 +157,7 @@ public class Enemy : Actor
         idleTimer = 1.0f + (float)Random.Shared.NextDouble() * 2f;
     }
 
-    public override void Update(float dt, MapHandler map, RenderWindow window)
+    public void Update(float dt, MapHandler map, RenderWindow window)
     {
         if (!Alive) return;
 

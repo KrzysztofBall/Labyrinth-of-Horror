@@ -46,7 +46,15 @@ class Gameplay : IState
         {
             Handler.ChangeState(Handler.Paused);
         }
-        Map.Update(dt,window);
+        if (Map.Update(dt, window)==1)
+        {
+                Handler.ChangeState(Handler.Win);
+        }
+        else if (Map.Update(dt, window) == 2)
+        {
+            Handler.ChangeState(Handler.Lose);
+        }
+            
     }
 
     public void Draw(RenderWindow window)
