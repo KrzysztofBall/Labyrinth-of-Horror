@@ -7,6 +7,8 @@ class Menu : IState
 {
     private List<Button> buttons = [];
     private StateHandler Handler;
+    private Texture backGround;
+    private Sprite BackGround;
 
     public Menu(StateHandler stateHandler)
     {
@@ -14,6 +16,8 @@ class Menu : IState
         Handler = stateHandler;
         buttons.Add(new Button((440,425),(400,50),_ => Handler.ChangeState(Handler.Gameplay)));
         //buttons.Add(new Button((440,500),(400,50),_ => Handler.Window.Close()));
+        backGround = new Texture("menu.png");
+        BackGround = new Sprite(backGround);
     }
     public void Update(float dt, RenderWindow window)
     {
@@ -25,6 +29,7 @@ class Menu : IState
 
     public void Draw(RenderWindow window)
     {
+        window.Draw(BackGround);
         foreach (var button in buttons)
         {
             button.Draw(window);
@@ -71,13 +76,16 @@ class Paused : IState
 {
     private StateHandler Handler;
     private List<Button> buttons = [];
-
+    private Texture backGround;
+    private Sprite BackGround;
     public Paused(StateHandler handler)
     {
         Handler = handler;
         buttons.Add(new Button((440,425),(400,50),_=> Handler.ChangeState(Handler.Gameplay)));
         buttons.Add(new Button((440,575),(400,50),_ => Handler.Window.Close()));
         buttons.Add(new Button((440,500),(400,50),_=> Handler.ChangeState(Handler.Menu)));
+        backGround = new Texture("paused.png");
+        BackGround = new Sprite(backGround);
     }
     public void Update(float dt, RenderWindow window)
     {
@@ -93,6 +101,7 @@ class Paused : IState
 
     public void Draw(RenderWindow window)
     {
+        window.Draw(BackGround);
         foreach (var button in buttons)
         {
             button.Draw(window);
@@ -104,10 +113,14 @@ class Win : IState
 {
     private StateHandler Handler;
     private List<Button> buttons = [];
+    private Texture backGround;
+    private Sprite BackGround;
     public Win(StateHandler handler)
     {
         this.Handler = handler;
         buttons.Add(new Button((440,500),(400,50),_=> Handler.ChangeState(Handler.Menu)));
+        backGround = new Texture("win.png");
+        BackGround = new Sprite(backGround);
     }
 
     public void Update(float dt,RenderWindow window)
@@ -120,6 +133,7 @@ class Win : IState
 
     public void Draw(RenderWindow window)
     {
+        window.Draw(BackGround);
         foreach (var button in buttons)
         {
             button.Draw(window);
@@ -131,10 +145,14 @@ class Lose : IState
 {
     private StateHandler Handler;
     private List<Button> buttons = [];
+    private Texture backGround;
+    private Sprite BackGround;
     public Lose(StateHandler handler)
     {
         this.Handler = handler;
         buttons.Add(new Button((440,500),(400,50),_=> Handler.ChangeState(Handler.Menu)));
+        backGround = new Texture("lose.png");
+        BackGround = new Sprite(backGround);
     }
 
     public void Update(float dt,RenderWindow window)
@@ -146,6 +164,7 @@ class Lose : IState
     }
     public void Draw(RenderWindow window)
     {
+        window.Draw(BackGround);
         foreach (var button in buttons)
         {
             button.Draw(window);
