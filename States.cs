@@ -12,7 +12,7 @@ class Menu : IState
     {
         Handler = stateHandler;
 
-        // Start Game → zawsze NOWY gameplay
+        // Start Game
         buttons.Add(new Button((440,425),(400,50),"Plej", _ =>
         {
             Handler.ChangeState(new Gameplay(Handler));
@@ -50,13 +50,12 @@ class Gameplay : IState
         Handler = handler;
         timerText = new Text(new Font("arial.ttf"),"0.00", 32);
         timerText.FillColor = Color.White;
-        timerText.Position = new Vector2f(1000, 20); // prawy górny róg
+        timerText.Position = new Vector2f(1000, 20); // Timer position
 
     }
 
     public void Update(float dt, RenderWindow window)
     {
-        // Pauza → przekazujemy referencję do TEGO gameplayu
         if (Keyboard.IsKeyPressed(Keyboard.Key.Escape))
         {
             Handler.ChangeState(new Paused(Handler, this));
@@ -95,7 +94,7 @@ class Gameplay : IState
 class Paused : IState
 {
     private StateHandler Handler;
-    private Gameplay gameplay; // referencja do aktualnego gameplayu
+    private Gameplay gameplay;
     private List<Button> buttons = new();
     private Texture backGround;
     private Sprite BackGround;
@@ -105,19 +104,19 @@ class Paused : IState
         Handler = handler;
         this.gameplay = gameplay;
 
-        // Resume → wracamy do TEGO gameplayu
+        // Resume
         buttons.Add(new Button((440,425),(400,50),"Reasume", _ =>
         {
             Handler.ChangeState(gameplay);
         }));
 
-        // Back to Menu → niszczy gameplay (bo nie ma referencji)
+        // Back to Menu 
         buttons.Add(new Button((440,500),(400,50),"Exit to menu", _ =>
         {
             Handler.ChangeState(new Menu(Handler));
         }));
 
-        // Exit
+        // Exit game
         buttons.Add(new Button((440,575),(400,50),"Exit game", _ =>
         {
             Handler.Window.Close();
@@ -162,7 +161,7 @@ public Win(StateHandler handler, float time)
     backGround = new Texture("win.png");
     BackGround = new Sprite(backGround);
 
-    timeText = new Text(new Font("arial.ttf"),$"Czas: {finalTime:0.00}s", 48);
+    timeText = new Text(new Font("arial.ttf"),$"Time: {finalTime:0.00}s", 48);
     timeText.FillColor = Color.Yellow;
     timeText.Position = new Vector2f(400, 300);
 }

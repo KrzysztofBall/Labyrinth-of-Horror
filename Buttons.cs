@@ -10,19 +10,16 @@ public class Button
 
     private bool wasPressedLastFrame = false;
 
-    // 🔥 WSPÓLNY FONT DLA WSZYSTKICH PRZYCISKÓW
     private static readonly Font DefaultFont = new Font("arial.ttf");
 
     public Button(Vector2f position, Vector2f size, string text, Action<Button>? onClick = null)
     {
-        // Prostokąt
         Shape = new RectangleShape(size)
         {
             Position = position,
             FillColor = Color.Green
         };
 
-        // Tekst
         Label = new Text(DefaultFont,text, 32);
         Label.FillColor = Color.Black;
 

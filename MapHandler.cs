@@ -12,7 +12,7 @@ public class MapHandler
     private const int screenWidth = 1280;
     private const int screenHeight = 720;
 
-    private const int rayWidth = 320;   // liczba promieni
+    private const int rayWidth = 320;   //Number of rays
     private int val = 0;
     private const float scaleX = (float)screenWidth / rayWidth;
     public bool ExitUnlocked => Enemies.All(e => !e.Alive);
@@ -136,14 +136,14 @@ public class MapHandler
                 (screenHeight - wallHeight) / 2f
             );
 
-            // Domyślny kolor ściany
+            // Deafult wall
             Color wallColor = new Color(hit.Shade, hit.Shade, hit.Shade);
 
-            // Jeśli trafiliśmy w wyjście (tile == 3)
+            // Exit wall red - closed, green - open
             if (hit.Tile == 3)
             {
-                if (!ExitUnlocked) wallColor = new Color(hit.Shade, 0, 0);      // czerwony odcień
-                else wallColor = new Color(0, hit.Shade, 0);      // zielony odcień
+                if (!ExitUnlocked) wallColor = new Color(hit.Shade, 0, 0);      
+                else wallColor = new Color(0, hit.Shade, 0);      
             }
 
         column.FillColor = wallColor;
@@ -154,46 +154,42 @@ public class MapHandler
 
     }
 
-    private const int MiniTile = 8; // rozmiar jednego kafla na minimapie
-    private const int MiniPadding = 10; // odstęp od krawędzi ekranu
-
+    private const int MiniTile = 8; // tile on minimap
+    private const int MiniPadding = 10; // distance from edge of screen
 
     public void DrawMinimap(RenderWindow window)
-{
-    int rows = Map.GetLength(0);
-    int cols = Map.GetLength(1);
-
-    // tło minimapy
-    RectangleShape bg = new RectangleShape(new Vector2f(cols * MiniTile + 4, rows * MiniTile + 4));
-    bg.FillColor = new Color(0, 0, 0, 150);
-    bg.Position = new Vector2f(MiniPadding - 2, MiniPadding - 2);
-    window.Draw(bg);
-
-    // rysowanie mapy
-    for (int y = 0; y < rows; y++)
     {
-        for (int x = 0; x < cols; x++)
-        {
+        int rows = Map.GetLength(0);
+        int cols = Map.GetLength(1);
+
+        // Minimap background
+        RectangleShape bg = new RectangleShape(new Vector2f(cols * MiniTile + 4, rows * MiniTile + 4));
+        bg.FillColor = new Color(0, 0, 0, 150);
+        bg.Position = new Vector2f(MiniPadding - 2, MiniPadding - 2);
+        window.Draw(bg);
+
+        // Minimap
+        for (int y = 0; y < rows; y++) {
+        for (int x = 0; x < cols; x++) {
             RectangleShape tile = new RectangleShape(new Vector2f(MiniTile, MiniTile));
             tile.Position = new Vector2f(MiniPadding + x * MiniTile, MiniPadding + y * MiniTile);
 
             if (Map[y, x] == 1)
-                tile.FillColor = new Color(80, 80, 80); // ściana
+                tile.FillColor = new Color(80, 80, 80); // wall
             else if (Map[y,x] == 3)
                 {
                     if (!ExitUnlocked) tile.FillColor = Color.Red;
                     else tile.FillColor = Color.Green;
                 }
             else
-                tile.FillColor = new Color(30, 30, 30); // pusta przestrzeń
+                tile.FillColor = new Color(30, 30, 30); // empty space
 
             window.Draw(tile);
         }
     }
 
-    // rysowanie przeciwników
-    foreach (var enemy in Enemies)
-    {
+    // enemies
+    foreach (var enemy in Enemies) {
         if (!enemy.Alive) continue;
 
         CircleShape e = new CircleShape(MiniTile * 0.4f);
@@ -207,25 +203,25 @@ public class MapHandler
         window.Draw(e);
     }
 
-    // rysowanie gracza
-    CircleShape p = new CircleShape(MiniTile * 0.5f);
-    p.FillColor = Color.Cyan;
-    p.Origin = new Vector2f(p.Radius, p.Radius);
-    p.Position = new Vector2f(
+        // player
+        CircleShape p = new CircleShape(MiniTile * 0.5f);
+        p.FillColor = Color.Cyan;
+        p.Origin = new Vector2f(p.Radius, p.Radius);
+        p.Position = new Vector2f(
         MiniPadding + Player.Position.X * MiniTile,
         MiniPadding + Player.Position.Y * MiniTile
-    );
-    window.Draw(p);
+        );
+        window.Draw(p);
 
-    // kierunek patrzenia gracza
-    Vertex[] dir = new Vertex[2];
-    dir[0] = new Vertex(p.Position, Color.Cyan);
-    dir[1] = new Vertex(
+        // view direction
+        Vertex[] dir = new Vertex[2];
+        dir[0] = new Vertex(p.Position, Color.Cyan);
+        dir[1] = new Vertex(
         p.Position + new Vector2f(MathF.Cos(Player.Angle), MathF.Sin(Player.Angle)) * 20f,
         Color.Cyan
-    );
+        );
 
-    window.Draw(dir, PrimitiveType.Lines);
-}
+        window.Draw(dir, PrimitiveType.Lines);
+    }
 
 }

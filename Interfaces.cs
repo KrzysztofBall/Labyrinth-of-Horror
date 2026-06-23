@@ -14,17 +14,17 @@ public abstract class Actor : IEntity
 
     public Vector2f Hitbox => new Vector2f(Radius * 2, Radius * 2);
 
-    bool IsBlocked(int tx, int ty,MapHandler map)
-{
-    int tile = map.Map[ty, tx];
+    bool IsBlocked(int tx, int ty,MapHandler map) //can I move there?
+    {
+        int tile = map.Map[ty, tx];
 
-    if (tile == 1) return true; // ściana
+        if (tile == 1) return true; // wall
 
-    if (tile == 3 && !map.ExitUnlocked)
-        return true; // wyjście zamknięte
+        if (tile == 3 && !map.ExitUnlocked)
+            return true; // closed exit
 
-    return false; // puste pole lub otwarte wyjście
-}
+        return false; // empty space/open exit
+    }
 
 
     protected void Move(float dx, float dy, MapHandler map)
@@ -32,7 +32,7 @@ public abstract class Actor : IEntity
         float newX = Position.X + dx;
         float newY = Position.Y + dy;
 
-        // --- KOLIZJA OŚ X ---
+        // x axis
         float checkX = newX + MathF.Sign(dx) * Radius;
         int tileX = (int)checkX;
         int tileY = (int)Position.Y;
@@ -46,7 +46,7 @@ public abstract class Actor : IEntity
         if (!blockX)
             Position = new Vector2f(newX, Position.Y);
 
-        // --- KOLIZJA OŚ Y ---
+        // y axis
         float checkY = newY + MathF.Sign(dy) * Radius;
         tileX = (int)Position.X;
         tileY = (int)checkY;

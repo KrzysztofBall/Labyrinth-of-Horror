@@ -11,8 +11,8 @@ public class Weapon
     private SoundBuffer shootBuffer;
     private Sound shootSound;
 
-    private Texture state1; // Ready
-    private Texture state2; // Fired
+    private Texture state1; // Fired
+    private Texture state2; // Ready
     private Texture state3; // Reloading
 
     public float FireCooldown = 1.2f;
@@ -23,22 +23,18 @@ public class Weapon
 
     public Weapon()
     {
-        // DUŻA, KWADRATOWA BROŃ
         Sprite = new RectangleShape(new Vector2f(350, 350));
         Sprite.Origin = new Vector2f(350, 350);
 
-        // Celownik
         Sight = new CircleShape(3);
         Sight.Origin = new Vector2f(3, 3);
         Sight.FillColor = Color.Black;
 
-        // Dźwięk
         shootBuffer = new SoundBuffer("shoot2.ogg");
         shootSound = new Sound(shootBuffer);
 
-        // Tekstury broni
-        state1 = new Texture("weapon1.png"); // Ready
-        state2 = new Texture("weapon2.png"); // Fired
+        state1 = new Texture("weapon1.png"); // Fired
+        state2 = new Texture("weapon2.png"); // Ready
         state3 = new Texture("weapon3.png"); // Reloading
     }
 
@@ -78,7 +74,7 @@ public class Weapon
 
     public void Draw(RenderWindow window)
     {
-        // Wybór tekstury wg stanu
+        // Textures on states
         if (State == WeaponState.Ready)
             Sprite.Texture = state2;
         else if (State == WeaponState.Fired)
@@ -86,13 +82,12 @@ public class Weapon
         else
             Sprite.Texture = state3;
 
-        // Pozycja w prawym dolnym rogu
         Sprite.Position = new Vector2f(
             window.Size.X,
             window.Size.Y
         );
 
-        // Celownik na środku
+        // Sight
         Sight.Position = new Vector2f(
             window.Size.X / 2f,
             window.Size.Y / 2f

@@ -11,7 +11,7 @@ public class StateHandler
     {
         Window = window;
 
-        // Startujemy od menu
+        // Start from menu
         CurrentState = new Menu(this);
     }
 
@@ -19,7 +19,7 @@ public class StateHandler
     {
         CurrentState = newState;
 
-        // Ukrywanie kursora tylko w gameplayu
+        // Hide mouse
         if (newState is Gameplay)
         {
             Window.SetMouseCursorVisible(false);
@@ -28,7 +28,7 @@ public class StateHandler
                 Window
             );
         }
-        else
+        else //Not hide mouse
         {
             Window.SetMouseCursorVisible(true);
         }

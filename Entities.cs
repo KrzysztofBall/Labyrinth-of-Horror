@@ -112,16 +112,12 @@ public class Player : Actor
     }
 }
 
-// ======================================================
-//  ENEMY — AI: idle, widzenie, pogoń, atak
-// ======================================================
-
 public class Enemy : Actor
 {
     public bool Alive = true;
 
-    public int HP = 3; // 3 strzały do zabicia
-    public float Speed = 2f; // szybszy niż gracz
+    public int HP = 3; 
+    public float Speed = 2f; 
     public float AttackRange = 1.0f;
     private static SoundBuffer deathBuffer = new SoundBuffer("death.ogg");
     private static Sound deathSound = new Sound(deathBuffer);
@@ -133,15 +129,12 @@ public class Enemy : Actor
 
     MapHandler map;
 
-    // STUN
     private float stunTimer = 0f;
     private const float StunDuration = 0.4f;
 
-    // Idle movement
     private Vector2f idleDirection;
     private float idleTimer = 0f;
 
-    // Grafika
     private RectangleShape sprite;
 
     public Enemy(float x, float y, MapHandler map)
@@ -165,20 +158,16 @@ public class Enemy : Actor
     {
         if (!Alive) return;
 
-        // --- BLOKADA WCHODZENIA W GRACZA ---
-float minDist = map.Player.Radius + Radius + 0.5f; // 0.25 + 0.25 = 0.5
+        // can't move into player
+        float minDist = map.Player.Radius + Radius + 0.5f;
 
-Vector2f toPlayer = map.Player.Position - Position;
-float d = MathF.Sqrt(toPlayer.X * toPlayer.X + toPlayer.Y * toPlayer.Y);
+        Vector2f toPlayer = map.Player.Position - Position;
+        float d = MathF.Sqrt(toPlayer.X * toPlayer.X + toPlayer.Y * toPlayer.Y);
 
-if (d < minDist)
-{
-    // odsuń przeciwnika od gracza, ale tylko minimalnie
-    Vector2f push = toPlayer / d;
-    Position -= push * (minDist - d);
-
-            // UWAGA: NIE return tutaj!
-            // Bo przeciwnik nadal powinien móc zaatakować
+        if (d < minDist)
+        {
+            Vector2f push = toPlayer / d;
+            Position -= push * (minDist - d);
         }
 
 
@@ -188,13 +177,11 @@ if (d < minDist)
         if (stunTimer > 0f)
         {
             stunTimer -= dt;
-            return; // przeciwnik stoi
+            return; // stunned
         }
 
-        if (CanSeePlayer(map))
-            ChasePlayer(dt, map);
-        else
-            IdleMove(dt, map);
+        if (CanSeePlayer(map)) ChasePlayer(dt, map);
+        else IdleMove(dt, map);
     }
 
     private bool CanSeePlayer(MapHandler map)
@@ -265,79 +252,65 @@ if (d < minDist)
     }
 
     static private float Clamp(float value, float min, float max)
-{
-    if (value < min) return min;
-    if (value > max) return max;
-    return value;
-}
+    {
+        if (value < min) return min;
+        if (value > max) return max;
+        return value;
+    }
 
 
     public void Draw(RenderWindow window, MapHandler map)
-{
-    if (!Alive) return;
-
-    // wektor do gracza
-    float dx = Position.X - map.Player.Position.X;
-    float dy = Position.Y - map.Player.Position.Y;
-    float dist = MathF.Sqrt(dx * dx + dy * dy);
-
-    // kąt do przeciwnika
-    float angleToEnemy = MathF.Atan2(dy, dx);
-    float diff = Normalize(angleToEnemy - map.Player.Angle);
-
-    // poza FOV
-    if (MathF.Abs(diff) > map.Player.FOV)
-        return;
-
-    // wysokość i szerokość sprite’a
-    float spriteHeight = 600f / dist;
-    //spriteHeight = Clamp(spriteHeight, 20f, 300f);
-
-    float spriteWidth = (Radius * 2f) * (600f / dist);
-    //spriteWidth = Clamp(spriteWidth, 5f, 200f);
-
-    // pozycja środka sprite’a na ekranie
-    float centerX = (diff / map.Player.FOV + 1f) * 0.5f * window.Size.X;
-
-    // rysujemy sprite jako pionowe paski
-    int half = (int)(spriteWidth / 2f);
-
-    for (int i = -half; i <= half; i++)
     {
-        float columnX = centerX + i;
+        if (!Alive) return;
 
-        if (columnX < 0 || columnX >= window.Size.X)
-            continue;
+        float dx = Position.X - map.Player.Position.X;
+        float dy = Position.Y - map.Player.Position.Y;
+        float dist = MathF.Sqrt(dx * dx + dy * dy);
 
-        // kąt promienia dla tej kolumny
-        float cameraX = (columnX / window.Size.X) * 2f - 1f;
-        float rayAngle = map.Player.Angle + cameraX * map.Player.FOV;
+        float angleToEnemy = MathF.Atan2(dy, dx);
+        float diff = Normalize(angleToEnemy - map.Player.Angle);
 
-        // raycast
-        var hit = Raycasting.castRay(
-            map.Player.Position.X,
-            map.Player.Position.Y,
-            rayAngle,
-            map.Map
-        );
+        // outside fov
+        if (MathF.Abs(diff) > map.Player.FOV) return;
 
-        // jeśli ściana bliżej → nie rysujemy tej kolumny
-        if (hit.Distance < dist - Radius)
-            continue;
+        float spriteHeight = 600f / dist;
 
-        // rysujemy pionowy pasek przeciwnika
-        RectangleShape col = new RectangleShape(new Vector2f(1, spriteHeight));
-        col.Position = new Vector2f(columnX, (window.Size.Y - spriteHeight) / 2f);
+        float spriteWidth = (Radius * 2f) * (600f / dist);
 
-        if (HP == 3) col.FillColor = new Color(0, 150, 0);
-        else if (HP == 2) col.FillColor = new Color(180, 180, 0);
-        else col.FillColor = new Color(150, 0, 0);
+        float centerX = (diff / map.Player.FOV + 1f) * 0.5f * window.Size.X;
 
-        window.Draw(col);
+        int half = (int)(spriteWidth / 2f);
+
+        for (int i = -half; i <= half; i++)
+        {
+            float columnX = centerX + i;
+
+            if (columnX < 0 || columnX >= window.Size.X)
+                continue;
+
+            float cameraX = (columnX / window.Size.X) * 2f - 1f;
+            float rayAngle = map.Player.Angle + cameraX * map.Player.FOV;
+
+            // raycast
+            var hit = Raycasting.castRay(
+                map.Player.Position.X,
+                map.Player.Position.Y,
+                rayAngle,
+                map.Map
+                );
+
+            if (hit.Distance < dist - Radius)
+                continue;
+
+            RectangleShape col = new RectangleShape(new Vector2f(1, spriteHeight));
+            col.Position = new Vector2f(columnX, (window.Size.Y - spriteHeight) / 2f);
+
+            if (HP == 3) col.FillColor = new Color(0, 150, 0);
+            else if (HP == 2) col.FillColor = new Color(180, 180, 0);
+            else col.FillColor = new Color(150, 0, 0);
+
+            window.Draw(col);
+        }
     }
-}
-
-
-
 }
 
