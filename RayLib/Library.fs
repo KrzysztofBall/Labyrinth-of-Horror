@@ -5,6 +5,7 @@ module Raycasting =
     type RayHit = {
         Distance : float32
         Shade : byte
+        Tile : int
     }
 
     let castRay (px: float32) (py: float32) (angle: float32) (map: int[,]) =
@@ -71,6 +72,6 @@ module Raycasting =
 
         let shade = byte (min 255.0f (max 20.0f brightness))
 
-
-
-        { Distance = dist; Shade = shade }
+        { Distance = dist
+          Shade = shade
+          Tile = map.[hitY, hitX] }

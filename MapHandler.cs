@@ -13,6 +13,7 @@ public class MapHandler
     private const int screenHeight = 720;
 
     private const int rayWidth = 320;   // liczba promieni
+    private int val = 0;
     private const float scaleX = (float)screenWidth / rayWidth;
     public bool ExitUnlocked => Enemies.All(e => !e.Alive);
 
@@ -73,8 +74,9 @@ public class MapHandler
 
     public int Update(float dt, RenderWindow window)
     {
-        if(Player.Update(dt, this, window) == 1) return 1;
-        if(Player.Update(dt, this, window) == 2) return 2;
+        val = Player.Update(dt,this,window);
+        if(val == 1) return 1;
+        if(val == 2) return 2;
 
         foreach (var enemy in Enemies) enemy.Update(dt, this, window);
         return 0;
@@ -134,7 +136,18 @@ public class MapHandler
                 (screenHeight - wallHeight) / 2f
             );
 
-            column.FillColor = new Color(hit.Shade, hit.Shade, hit.Shade);
+            // Domyślny kolor ściany
+            Color wallColor = new Color(hit.Shade, hit.Shade, hit.Shade);
+
+            // Jeśli trafiliśmy w wyjście (tile == 3)
+            if (hit.Tile == 3)
+            {
+                if (!ExitUnlocked) wallColor = new Color(hit.Shade, 0, 0);      // czerwony odcień
+                else wallColor = new Color(0, hit.Shade, 0);      // zielony odcień
+            }
+
+        column.FillColor = wallColor;
+
 
             window.Draw(column);
         }
@@ -166,6 +179,11 @@ public class MapHandler
 
             if (Map[y, x] == 1)
                 tile.FillColor = new Color(80, 80, 80); // ściana
+            else if (Map[y,x] == 3)
+                {
+                    if (!ExitUnlocked) tile.FillColor = Color.Red;
+                    else tile.FillColor = Color.Green;
+                }
             else
                 tile.FillColor = new Color(30, 30, 30); // pusta przestrzeń
 

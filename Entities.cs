@@ -2,6 +2,7 @@ using SFML.Graphics;
 using SFML.System;
 using SFML.Window;
 using RayLib;
+using SFML.Audio;
 
 public class Player : Actor
 {
@@ -120,8 +121,11 @@ public class Enemy : Actor
     public bool Alive = true;
 
     public int HP = 3; // 3 strzały do zabicia
-    public float Speed = 0.5f; // szybszy niż gracz
+    public float Speed = 2f; // szybszy niż gracz
     public float AttackRange = 1.0f;
+    private static SoundBuffer deathBuffer = new SoundBuffer("death.ogg");
+    private static Sound deathSound = new Sound(deathBuffer);
+
     public float Damage = 10f;
     public float AttackCooldown = 1.0f;
 
@@ -246,6 +250,7 @@ if (d < minDist)
         if (HP <= 0)
         {
             Alive = false;
+            deathSound.Play();
             return;
         }
 
